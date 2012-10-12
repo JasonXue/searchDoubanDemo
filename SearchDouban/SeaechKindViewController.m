@@ -53,7 +53,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _dataSource = [NSMutableArray new];
+    _dataSource = nil;
     // Do any additional setup after loading the view from its nib.
     self.searchBar.delegate = self;
     self.searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -77,6 +77,11 @@
     [self setSearchMoiveButton:nil];
     [self setSearchBooksButton:nil];
     [self setSearchMusicButton:nil];
+    if (_dataSource != nil) {
+        [_dataSource removeAllObjects];
+        [_dataSource release];
+        _dataSource = nil;
+    }
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -106,6 +111,9 @@
     _currentSearchText = [searchBar.text copy];
     [_dataSource removeAllObjects];
     _currentResultCount = 0;
+    if(_dataSource == nil) {
+        _dataSource = [NSMutableArray new];
+    }
     [self doSearchWithText:_currentSearchText withSearchType:_currentSearchType withCurrentResultCount:0];
     _lastSearchType = _currentSearchType;
     [searchBar resignFirstResponder];
@@ -233,7 +241,6 @@
         } else {
             return _dataSource.count;
         }
-        
     }
 }
 
@@ -255,7 +262,12 @@
         UITableViewCell *default_cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:defaultCellIdentifier]autorelease];
         if (_anyMoreInfo == TRUE) {
             default_cell.textLabel.text = @"       加载更多结果...";
+        } else if(_dataSource == nil) {
+            default_cell.textLabel.text = @"       请输入关键词进行搜索...";
+        } else {
+            default_cell.textLabel.text = @"       没有符合的结果...";
         }
+        
         default_cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return default_cell;
     }

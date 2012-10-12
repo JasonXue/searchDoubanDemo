@@ -58,8 +58,8 @@
 		32ABCE291627BBBB00C8CB44 /* searchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 32ABCE281627BBBB00C8CB44 /* searchResultCell.m */; };
 		32ABCE301627BC8000C8CB44 /* FLImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 32ABCE2C1627BC8000C8CB44 /* FLImageView.m */; };
 		32ABCE311627BC8000C8CB44 /* FullyLoaded.m in Sources */ = {isa = PBXBuildFile; fileRef = 32ABCE2E1627BC8000C8CB44 /* FullyLoaded.m */; };
-		32ABCE3B1627C88D00C8CB44 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32ABCE391627C88D00C8CB44 /* DetailViewController.m */; };
-		32ABCE3C1627C88D00C8CB44 /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32ABCE3A1627C88D00C8CB44 /* DetailViewController.xib */; };
+		32ABCE4516280C9600C8CB44 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32ABCE4216280C9600C8CB44 /* DetailViewController.m */; };
+		32ABCE4616280C9600C8CB44 /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32ABCE4316280C9600C8CB44 /* DetailViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -165,9 +165,9 @@
 		32ABCE2D1627BC8000C8CB44 /* FullyLoaded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullyLoaded.h; sourceTree = "<group>"; };
 		32ABCE2E1627BC8000C8CB44 /* FullyLoaded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullyLoaded.m; sourceTree = "<group>"; };
 		32ABCE2F1627BC8000C8CB44 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
-		32ABCE381627C88D00C8CB44 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailViewController.h; path = ../DetailViewController.h; sourceTree = "<group>"; };
-		32ABCE391627C88D00C8CB44 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailViewController.m; path = ../DetailViewController.m; sourceTree = "<group>"; };
-		32ABCE3A1627C88D00C8CB44 /* DetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DetailViewController.xib; path = ../DetailViewController.xib; sourceTree = "<group>"; };
+		32ABCE4216280C9600C8CB44 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		32ABCE4316280C9600C8CB44 /* DetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailViewController.xib; sourceTree = "<group>"; };
+		32ABCE4416280C9600C8CB44 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,9 +236,9 @@
 				32ABCD7C1626EA0E00C8CB44 /* MacroDef.h */,
 				32ABCE271627BBBB00C8CB44 /* searchResultCell.h */,
 				32ABCE281627BBBB00C8CB44 /* searchResultCell.m */,
-				32ABCE381627C88D00C8CB44 /* DetailViewController.h */,
-				32ABCE391627C88D00C8CB44 /* DetailViewController.m */,
-				32ABCE3A1627C88D00C8CB44 /* DetailViewController.xib */,
+				32ABCE4216280C9600C8CB44 /* DetailViewController.m */,
+				32ABCE4316280C9600C8CB44 /* DetailViewController.xib */,
+				32ABCE4416280C9600C8CB44 /* DetailViewController.h */,
 				32ABCD521626DDA000C8CB44 /* Supporting Files */,
 			);
 			path = SearchDouban;
@@ -440,7 +440,7 @@
 			files = (
 				32ABCD561626DDA000C8CB44 /* InfoPlist.strings in Resources */,
 				32ABCD6F1626DF0400C8CB44 /* SeaechKindViewController.xib in Resources */,
-				32ABCE3C1627C88D00C8CB44 /* DetailViewController.xib in Resources */,
+				32ABCE4616280C9600C8CB44 /* DetailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,7 +492,7 @@
 				32ABCE291627BBBB00C8CB44 /* searchResultCell.m in Sources */,
 				32ABCE301627BC8000C8CB44 /* FLImageView.m in Sources */,
 				32ABCE311627BC8000C8CB44 /* FullyLoaded.m in Sources */,
-				32ABCE3B1627C88D00C8CB44 /* DetailViewController.m in Sources */,
+				32ABCE4516280C9600C8CB44 /* DetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
