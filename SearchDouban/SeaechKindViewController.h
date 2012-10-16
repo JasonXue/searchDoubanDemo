@@ -12,7 +12,8 @@
 typedef enum {
     SearchTypeMovie,
     SearchTypeBook,
-    SearchTypeMusic
+    SearchTypeMusic,
+    SearchTypeNone
 } SearchType;
 
 
@@ -24,6 +25,7 @@ typedef enum {
     SearchType _lastSearchType;
     BOOL _anyMoreInfo;
     NSInteger _currentResultCount;
+    NSInteger _totalResult;
 }
 @property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (retain, nonatomic) IBOutlet UITableView *tableView;

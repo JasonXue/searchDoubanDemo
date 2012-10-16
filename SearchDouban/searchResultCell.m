@@ -7,6 +7,7 @@
 //
 
 #import "searchResultCell.h"
+#import "MacroDef.h"
 
 @implementation searchResultCell
 @synthesize coverImageView = _coverImageView;
@@ -39,12 +40,12 @@
 }
 -(void)loadDataInfo:(NSDictionary*)data
 {
-    NSLog(@"imageURL:%@", [data objectForKey:@"IMAGE_URL"]);
-    [self.coverImageView loadImageAtURLString:[data objectForKey:@"IMAGE_URL"] placeholderImage:nil];
+//    NSLog(@"imageURL:%@", [data objectForKey:@"IMAGE_URL"]);
+    [self.coverImageView loadImageAtURLString:[data objectForKey:LocalDataKEY_IMAGE_URL] placeholderImage:nil];
     
-    [self.title setText:[data objectForKey:@"title"]];
-    [self.rate_count setText:[NSString stringWithFormat:@"%@人喜欢",[data objectForKey:@"RATING_COUNT"]]];
-    [self.rate_sroce setText:[NSString stringWithFormat:@"评分:%@",[data objectForKey:@"RATING_SCORE"]]];
+    [self.title setText:[data objectForKey:LocalDataKEY_TITLE]];
+    [self.rate_count setText:[NSString stringWithFormat:@"%@人喜欢",[data objectForKey:LocalDataKEY_RATE_COUNT]]];
+    [self.rate_sroce setText:[NSString stringWithFormat:@"评分:%@",[data objectForKey:LocalDataKEY_SCORE]]];
 
 }
 

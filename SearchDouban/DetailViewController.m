@@ -8,7 +8,7 @@
 
 #import "DetailViewController.h"
 #import "SBJson.h"
-
+#import "MacroDef.h"
 @interface DetailViewController ()
 
 @end
@@ -82,8 +82,8 @@
     NSMutableDictionary* detailDic = [parser objectWithString:responseStr error:&error]; 
     [parser release];
     
-    NSString* titleString = [[detailDic objectForKey:@"title"] objectForKey:@"$t"];
-    NSString* descriptionString = [[detailDic objectForKey:@"summary"] objectForKey:@"$t"];
+    NSString* titleString = [[detailDic objectForKey:DoubanKEY_TITLE] objectForKey:DoubanKEY_VALUE];
+    NSString* descriptionString = [[detailDic objectForKey:DoubanKEY_SUMMARY] objectForKey:DoubanKEY_VALUE];
     
     [self.coverImageView loadImageAtURLString:imageURL placeholderImage:nil];
     [self.titleLable setText:titleString];

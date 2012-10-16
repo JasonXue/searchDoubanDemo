@@ -28,16 +28,25 @@
 - (IBAction)searchMoiveTouched:(id)sender {
     _currentSearchType = SearchTypeMovie;
     _searchBar.placeholder = SEARCH_MOIVE_STRING;
+    [_searchBooksButton setStyle:UIBarButtonItemStyleBordered];
+    [_searchMusicButton setStyle:UIBarButtonItemStyleBordered];
+    [_searchMoiveButton setStyle:UIBarButtonItemStyleDone];
 }
 
 - (IBAction)searchBooksTouched:(id)sender {
     _currentSearchType = SearchTypeBook;
     _searchBar.placeholder = SEARCH_BOOK_STRING;
+    [_searchBooksButton setStyle:UIBarButtonItemStyleDone];
+    [_searchMusicButton setStyle:UIBarButtonItemStyleBordered];
+    [_searchMoiveButton setStyle:UIBarButtonItemStyleBordered];
 }
 
 - (IBAction)SearchMusicTouched:(id)sender {
     _currentSearchType = SearchTypeMusic;
     _searchBar.placeholder = SEARCH_MUSIC_STRING;
+    [_searchBooksButton setStyle:UIBarButtonItemStyleBordered];
+    [_searchMusicButton setStyle:UIBarButtonItemStyleDone];
+    [_searchMoiveButton setStyle:UIBarButtonItemStyleBordered];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -63,9 +72,12 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     _currentSearchType = SearchTypeMovie;
+    _lastSearchType = SearchTypeNone;
     _anyMoreInfo = FALSE;
     _currentResultCount = 0;
     _currentSearchText = nil;
+    _totalResult = 0;
+    [_searchMoiveButton setStyle:UIBarButtonItemStyleDone];
 }
 
 
@@ -129,18 +141,20 @@
             searchAPI = SEARCH_BOOK_API;
             break;
         case SearchTypeMovie:
-            searchAPI = SEARCH_MOIVE_API;
+            searchAPI = SEARCH_MOVIE_API;
             break;
         case SearchTypeMusic:
             searchAPI = SEARCH_MUSIC_API;
             break;
         default:
-            searchAPI = SEARCH_MOIVE_API;
+            searchAPI = SEARCH_MOVIE_API;
             break;
     }
     NSString* urlWithGetRequest = [NSString stringWithFormat:@"%@?q=%@&start-index=%d&max-results=%d&alt=json", searchAPI, text,currentResultCount+1, RESULT_PAGE_SIZE + 1];
-    NSLog(@"URL:%@",urlWithGetRequest);
+    [_tableView reloadData];
+    //NSLog(@"URL:%@",urlWithGetRequest);
     NSString *str =  [urlWithGetRequest stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
     NSError* err = nil;
     NSString* responseStr = [NSString stringWithContentsOfURL:[NSURL URLWithString:str] encoding:NSUTF8StringEncoding error:&err];
     if (err != nil) {
@@ -154,8 +168,12 @@
     if (error != nil) {
         NSLog(@"JSON PARSER ERROR: %@", error);
     }
-    NSInteger _totalResult = [[[search_result objectForKey:@"opensearch:totalResults"] objectForKey:@"$t"] intValue];
+    _totalResult = [[[search_result objectForKey:@"opensearch:totalResults"] objectForKey:@"$t"] intValue];
     NSLog(@"totalResult = %d", _totalResult);
+    if (_totalResult == 0) {
+        _anyMoreInfo = FALSE;
+        return;
+    }
     NSMutableArray* result_array = [search_result objectForKey:@"entry"];
     NSInteger arrayIndex;
     NSInteger insertCount = result_array.count;
@@ -176,27 +194,27 @@
 {
     NSString* subAPI;
     NSString* imageURL;
-    NSMutableArray* linkArray = [data objectForKey:@"link"];
+    NSMutableArray* linkArray = [data objectForKey:DoubanKEY_LINKS];
     NSInteger arrayIndex;
     NSString* relString;
     for (arrayIndex = 0; arrayIndex < linkArray.count; arrayIndex++) {
-        relString = [[linkArray objectAtIndex:arrayIndex] objectForKey:@"@rel"];
+        relString = [[linkArray objectAtIndex:arrayIndex] objectForKey:DoubanKEY_LINK_TYPE];
         
         if([relString compare:@"self"] == NSOrderedSame) {
-            subAPI = [[linkArray objectAtIndex:arrayIndex] objectForKey:@"@href"];
+            subAPI = [[linkArray objectAtIndex:arrayIndex] objectForKey:DoubanKEY_LINK_VLAUE];
         } else if([relString compare:@"image"] == NSOrderedSame) {
-            imageURL = [[linkArray objectAtIndex:arrayIndex] objectForKey:@"@href"];
+            imageURL = [[linkArray objectAtIndex:arrayIndex] objectForKey:DoubanKEY_LINK_VLAUE];
         }
     }
 
     NSMutableDictionary *newData = [NSMutableDictionary new];
-    [newData setObject:subAPI forKey:@"API_URL"];
-    [newData setObject:imageURL forKey:@"IMAGE_URL"];
-    [newData setObject:[[data objectForKey:@"title"] objectForKey:@"$t"] forKey:@"title"];
-    [newData setObject:[[data objectForKey:@"gd:rating"] objectForKey:@"@average"] forKey:@"RATING_SCORE"];
-    [newData setObject:[[data objectForKey:@"gd:rating"] objectForKey:@"@numRaters"] forKey:@"RATING_COUNT"];
-    NSLog(@"title:%@, api_url:%@, image_url:%@,score:%@,count:%@", [newData objectForKey:@"title"], subAPI, imageURL,
-          [newData objectForKey:@"RATING_SCORE"],[newData objectForKey:@"RATING_COUNT"]);
+    [newData setObject:subAPI forKey:LocalDataKEY_API_URL];
+    [newData setObject:imageURL forKey:LocalDataKEY_IMAGE_URL];
+    [newData setObject:[[data objectForKey:DoubanKEY_TITLE] objectForKey:DoubanKEY_VALUE] forKey:LocalDataKEY_TITLE];
+    [newData setObject:[[data objectForKey:DoubanKEY_Rating] objectForKey:DoubanKEY_SCORE] forKey:LocalDataKEY_SCORE];
+    [newData setObject:[[data objectForKey:DoubanKEY_Rating] objectForKey:DoubanKEY_RATE_COUNT] forKey:LocalDataKEY_RATE_COUNT];
+    NSLog(@"title:%@, api_url:%@, image_url:%@,score:%@,count:%@", [newData objectForKey:LocalDataKEY_TITLE], subAPI, imageURL,
+          [newData objectForKey:LocalDataKEY_SCORE],[newData objectForKey:LocalDataKEY_RATE_COUNT]);
     
     [_dataSource addObject:newData];
     [newData release];
@@ -206,7 +224,7 @@
 #pragma UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_dataSource != nil  && indexPath.row < _dataSource.count) {
+    if (_dataSource != nil  && indexPath.row < _dataSource.count + 1 && indexPath.row != 0) {
         return 110;
     }else {
         return 30;
@@ -216,18 +234,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_dataSource != nil  && indexPath.row < _dataSource.count) {
+    if ([_searchBar isFirstResponder]) {
+        [_searchBar resignFirstResponder];
+    }    
+    if (_dataSource != nil  && indexPath.row < (_dataSource.count +1) && indexPath.row != 0) {
         DetailViewController* detailViewController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
-        NSDictionary* data = [_dataSource objectAtIndex:indexPath.row];
+        NSDictionary* data = [_dataSource objectAtIndex:(indexPath.row -1)];
         //NSLog(@"URL:%@", [data objectForKey:@"API_URL"]);
-        [detailViewController loadViewWithURLString:[data objectForKey:@"API_URL"] withImageURLString:[data objectForKey:@"IMAGE_URL"]];
+        [detailViewController loadViewWithURLString:[data objectForKey:LocalDataKEY_API_URL] withImageURLString:[data objectForKey:LocalDataKEY_IMAGE_URL]];
         [self presentModalViewController:detailViewController animated:YES];
     }else {
-        if (_anyMoreInfo == TRUE) {
+        if (_anyMoreInfo == TRUE && indexPath.row != 0) {
             [self doSearchWithText:_currentSearchText withSearchType:_lastSearchType withCurrentResultCount:_currentResultCount];
         }
     }
-    NSLog(@"select:%d", indexPath.row);
+//    NSLog(@"select:%d", indexPath.row);
 }
 
 #pragma UITableViewDataSource
@@ -236,10 +257,15 @@
     if (_dataSource == nil) {
         return 1;
     } else {
-        if (_anyMoreInfo == TRUE) {
-            return _dataSource.count+1;
+        if (_anyMoreInfo == TRUE) 
+        {
+            return _dataSource.count+2;
         } else {
-            return _dataSource.count;
+            if (_dataSource.count == 0) {
+                return 1;
+            } else {
+                return _dataSource.count+1;
+            }
         }
     }
 }
@@ -248,8 +274,8 @@
 {
     static NSString *searchResultCellIdentifier = @"SearchResultCell";
     static NSString *defaultCellIdentifier = @"DefaultCell";
-    if (_dataSource != nil  && indexPath.row < _dataSource.count) {
-        NSDictionary* data = [_dataSource objectAtIndex:indexPath.row];
+    if (_dataSource != nil  && indexPath.row < (_dataSource.count+1) && indexPath.row != 0) {
+        NSDictionary* data = [_dataSource objectAtIndex:(indexPath.row -1)];
         searchResultCell* cell = (searchResultCell*)[tableView dequeueReusableCellWithIdentifier:searchResultCellIdentifier];
         if (!cell) {
             cell = [[searchResultCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:searchResultCellIdentifier];
@@ -260,7 +286,9 @@
         return cell;
     } else {
         UITableViewCell *default_cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:defaultCellIdentifier]autorelease];
-        if (_anyMoreInfo == TRUE) {
+        if (_totalResult != 0 && indexPath.row == 0) {
+            default_cell.textLabel.text = [NSString stringWithFormat:@"       共%d个搜索结果:",_totalResult];
+        } else if (_anyMoreInfo == TRUE) {
             default_cell.textLabel.text = @"       加载更多结果...";
         } else if(_dataSource == nil) {
             default_cell.textLabel.text = @"       请输入关键词进行搜索...";
